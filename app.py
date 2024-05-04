@@ -1,0 +1,298 @@
+import streamlit as st
+import numpy as np
+
+def dashboard():
+    st.markdown('<h1 style="color: #DA0C81;">Aplikasi Penentu pH Larutan</h1>', unsafe_allow_html=True)
+    st.write('Halo **users**, selamat datang di web kelompok 11'"\N{winking face}")
+    st.write('Aplikasi <span style="color: #DA0C81;">**pHlytics**</span> ini dapat digunakan untuk menghitung pH dari suatu larutan disertai dengan sifat larutan tersebut dengan menginput konsentrasi (molaritas)', unsafe_allow_html=True)
+    image1 = st.image("asset/header.png", use_column_width=True, width=None, clamp=False)
+
+def kalkulator():
+    # Tambahkan pilihan tambahan di sidebar setelah memilih kalkulator
+    st.sidebar.subheader("Pilihan Kalkulator:")
+    selected_calc_option = st.sidebar.selectbox(
+        'Pilih:',
+        ("Pilih Penentuan", "Penentuan Nilai pH", "Penentuan Indikator")
+    )
+    if selected_calc_option == "Pilih Penentuan":
+        st.sidebar.warning("Harap pilih penentuan terlebih dahulu!")
+    # Tambahkan logika untuk pilihan tambahan
+    elif selected_calc_option == "Penentuan Nilai pH":
+        st.markdown('<h1 style="color: #DA0C81;">Penentuan Nilai pH</h1>', unsafe_allow_html=True)
+        option = st.selectbox("Jenis Senyawa:", ["Pilih Jenis Senyawa", "Asam Kuat", "Basa Kuat", "Asam Lemah", "Basa Lemah"])
+
+        if option == "Pilih Jenis Senyawa":
+            st.warning("Pilih jenis senyawa terlebih dahulu")
+        else:
+            jumlah_digit = 4
+            cons = st.number_input(f'Masukkan konsentrasi larutan dalam Molaritas (M)', format='%.'+str(jumlah_digit)+'f')
+            
+            if option in ["Asam Kuat", "Basa Kuat"]:
+                jumlah_digit1 = 4
+                val = st.number_input(f'Masukkan nilai valensi larutan', format='%.'+str(jumlah_digit)+'f')
+
+                if option == "Asam Kuat":
+                    H = cons * val
+                    pH = -(np.log10(H))
+                    if st.button('Hitung'):
+                        if cons == 0 or val == 0:
+                            st.warning("Harap untuk tidak memberi angka 0 pada perhitungan")
+                        else :
+                            st.balloons()
+                            st.success(f'pH Larutan yang merupakan {option} adalah: {round(pH,2)}')
+                elif option == "Basa Kuat":
+                    OH = cons * val
+                    POH = (np.log10(OH))
+                    pH = 14 - POH
+                    if st.button('Hitung'):
+                        if cons == 0 or val == 0:
+                            st.warning("Harap untuk tidak memberi angka 0 pada perhitungan")
+                        else :
+                            st.balloons()
+                            st.success(f'pH Larutan yang merupakan {option} adalah: {round(pH,2)}')
+
+            elif option in ["Asam Lemah", "Basa Lemah"]:
+                a = cons * (1.8 * 10**(-5))
+
+                if option == "Asam Lemah":
+                    H = np.sqrt(a)
+                    pH = -(np.log10(H))
+                    if st.button('Hitung'):
+                        if cons == 0:
+                            st.warning("Harap untuk tidak memberi angka 0 pada perhitungan")
+                        else :
+                            st.balloons()
+                            st.success(f'pH Larutan yang merupakan {option} adalah: {round(pH,2)}')
+                elif option == "Basa Lemah":
+                    OH = np.sqrt(a)
+                    POH = - (np.log10(OH))
+                    pH = 14 - POH
+                    if st.button('Hitung'):
+                        if cons == 0:
+                            st.warning("Harap untuk tidak memberi angka 0 pada perhitungan")
+                        else :
+                            st.balloons()
+                            st.success(f'pH Larutan yang merupakan {option} adalah: {round(pH,2)}')
+
+                    
+    elif selected_calc_option == "Penentuan Indikator":
+        st.markdown('<h1 style="color: #DA0C81;">Penentuan Indikator</h1>', unsafe_allow_html=True) 
+        ph_value = st.number_input("Masukkan nilai pH anda :", min_value=1.0, max_value=10.1)
+        if 3.1 <= ph_value <= 4.4:
+            st.success("Indikator yang cocok untuk pH anda adalah: Sindur Metil")
+            if st.button("Pelajari Tentang Sindur Metil"):
+                st.markdown("""
+                    Indikator Sindur Metil adalah senyawa kimia yang digunakan sebagai indikator pH pada larutan asam atau netral dalam rentang pH 3,1-4,4.
+                    berikut adalah beberapa fakta tentang sindur metil:
+                    
+                    - **Nama Kimia:** Sindur metil juga dikenal sebagai 4-dimetilaminoazobenzena atau merah CIB-3.
+                    
+                    - **Sifat Warna:** Senyawa ini memiliki sifat warna yang unik; berwarna merah dalam suasana asam dan berubah menjadi kuning dalam suasana basa.
+                    
+                    - **Indikator pH:** Sindur metil digunakan sebagai indikator pH dalam titrasi asam-basa. Perubahan warna yang ditunjukkan oleh sindur metil digunakan untuk menentukan titik akhir titrasi.
+                    
+                    - **Spektrum Absorpsi:** Sindur metil menunjukkan puncak absorpsi dalam spektrum UV-Vis pada panjang gelombang sekitar 520 nm.
+                    
+                    - **Aplikasi:** Selain sebagai indikator pH, sindur metil juga digunakan dalam pewarnaan histologi untuk mewarnai jaringan biologis dalam mikroskopi.
+                    
+                    - **Keamanan:** Meskipun digunakan dalam banyak aplikasi laboratorium, sindur metil harus ditangani dengan hati-hati karena sifatnya yang beracun dan kemungkinan pencemaran lingkungan.
+                    
+                    - **Penggunaan Historis:** Sindur metil telah digunakan dalam berbagai aplikasi sejak awal abad ke-20 dan tetap menjadi salah satu indikator pH yang penting dan umum digunakan hingga saat ini.
+                    """)
+        elif 4.2 <= ph_value <= 6.3:
+            st.success("Indikator yang cocok untuk pH anda adalah: Indikator Metil Merah")
+            if st.button("Pelajari Tentang Indikator Metil Merah"):
+                st.markdown("""        
+                    Indikator metil merah adalah senyawa kimia yang digunakan sebagai indikator pH pada larutan asam atau netral dalam rentang pH 4,2-6,3.
+                    berikut adalah beberapa fakta tentang indikator metil merah:
+                    
+                    - **Nama Kimia:** Metil merah juga dikenal sebagai p-[(dimetilamino)fenil]-diazenilbenzena atau C.I. 13020.
+                    
+                    - **Perubahan Warna:** Metil merah memiliki sifat warna yang unik: berwarna merah dalam suasana asam dan berubah menjadi kuning saat larutan menjadi basa. Perubahan warna ini terjadi di sekitar pH 4,4 hingga 6,2.
+                    
+                    - **Penggunaan:** Metil merah sering digunakan sebagai indikator pH dalam titrasi asam-basa, terutama dalam titrasi asam lemah dengan basa kuat atau dalam titrasi alkali dengan asam lemah.
+                    
+                    - **Titik Perubahan Warna:** Titik perubahan warna metil merah sedikit lebih rendah daripada fenolftalein, sehingga metil merah lebih cocok untuk titrasi asam yang lebih lemah.
+                    
+                    - **Kepekaan Terhadap Cahaya:** Metil merah rentan terhadap kerusakan oleh cahaya matahari dan sinar UV, sehingga harus disimpan dalam botol berwarna gelap untuk menjaga kestabilannya.
+                    """)
+        elif 6.0 <= ph_value <= 7.6:
+            st.success("Indikator yang cocok untuk pH anda adalah: Indikator Bromtimol Blue")
+            if st.button("Pelajari Tentang Indikator Bromtimol Blue"):
+                st.markdown("""        
+                    Indikator bromtimol blue adalah senyawa kimia yang digunakan sebagai indikator pH dalam titrasi asam-basa dalam rentang pH 6,0-7,6.
+                    berikut adalah beberapa fakta tentang indikator bromtimol blue:
+                    
+                    - **Nama Kimia:** Bromtimol blue juga dikenal sebagai 3',3'',5',5''-tetrabromofenolsulfonftalein atau C.I. 42090.
+                    
+                    - **Perubahan Warna:** Bromtimol blue memiliki sifat warna yang unik: berwarna biru dalam suasana basa, hijau dalam suasana netral, dan berubah menjadi kuning ketika larutan menjadi asam. Perubahan warna ini terjadi di sekitar pH 6,0 hingga 7,6.
+                    
+                    - **Kepekaan Terhadap Cahaya:** Seperti banyak indikator lainnya, bromtimol blue rentan terhadap kerusakan oleh cahaya matahari dan sinar UV, sehingga harus disimpan dalam botol berwarna gelap untuk menjaga kestabilannya.
+                    
+                    - **Penggunaan:** Bromtimol blue digunakan sebagai indikator pH dalam titrasi asam-basa, terutama dalam titrasi asam kuat dengan basa kuat atau dalam titrasi asam lemah dengan basa kuat.
+                    
+                    - **Penggunaan Lain:** Selain sebagai indikator pH, bromtimol blue juga digunakan dalam biologi sebagai penanda untuk mengidentifikasi zona pH dalam elektroforesis gel agarosa.
+                    """)
+
+        elif 8.2 <= ph_value <= 10:
+            st.success("Indikator yang cocok untuk pH anda adalah: Indikator Fenolftalein")
+            if st.button("Pelajari Tentang Indikator Fenolftalein"):
+                st.markdown("""        
+                Indikator fenolftalein adalah senyawa kimia yang digunakan sebagai indikator pH dalam titrasi asam-basa dalam rentang pH 8,2-10.
+                berikut adalah beberapa fakta tentang indikator fenolftalein:
+                
+                - **Nama Kimia:** Fenolftalein memiliki nama kimia 3,3-bis(4-hidroksifenil)-2H-isobenzofuran-1-on.
+                
+                - **Perubahan Warna:** Fenolftalein tidak berwarna dalam suasana asam, tetapi berubah menjadi merah muda hingga merah dalam suasana basa.
+                
+                - **Titik Perubahan Warna:** Perubahan warna fenolftalein terjadi di sekitar pH 8,2 hingga 10,0. Di bawah pH 8,2, fenolftalein tetap tidak berwarna, sedangkan di atas pH 10,0, fenolftalein menjadi merah.
+                
+                - **Penggunaan Umum:** Fenolftalein adalah indikator pH yang sangat umum digunakan dalam laboratorium kimia, terutama dalam titrasi asam-basa. Perubahan warna fenolftalein menunjukkan titik akhir titrasi, di mana asam dan basa telah bereaksi sepenuhnya.
+                
+                - **Kerusakan:** Fenolftalein rentan terhadap kerusakan oleh sinar UV dan dapat memudar dari paparan cahaya matahari yang berlebihan.
+                """)
+
+        else:
+            st.warning("""
+                    Harap masukkan nilai : 
+                    \n3.1 - 4.4 = untuk Sindur Metil
+                    \n4.2 - 6.3 = untuk Indikator Metil Merah
+                    \n6.0 - 7.6 = untuk Indikator Bromtimol Blue
+                    \n8.2 - 10 = untuk Indikator Fenolftalein
+                    """)
+
+
+def hitung_pH(nama_senyawa, jenis_senyawa, konsentrasi, valensi):
+    # Hitung pH dan indikator berdasarkan jenis senyawa
+    pH = None
+    indikator = None
+    if jenis_senyawa == "Asam Kuat":
+        pH = -np.log10(konsentrasi)
+        indikator = "Fenolftalein"
+    elif jenis_senyawa == "Asam Lemah":
+        # Hitung pH untuk asam lemah
+        # Anda perlu menambahkan logika untuk menghitung pH asam lemah
+        pass
+    elif jenis_senyawa == "Basa Kuat":
+        # Hitung pH untuk basa kuat
+        pOH = -np.log10(konsentrasi)
+        pH = 14 - pOH
+        indikator = "Fenolftalein"
+    elif jenis_senyawa == "Basa Lemah":
+        # Hitung pH untuk basa lemah
+        # Anda perlu menambahkan logika untuk menghitung pH basa lemah
+        pass
+
+    return pH, indikator
+
+def tentang_sistem():
+    st.markdown('<h1 style="color: #DA0C81;">Tentang Sistem</h1>', unsafe_allow_html=True)
+    st.markdown('<p style="color: #E95793;"><strong>Biodata Kelompok (Kelas 1C-Analisis Kimia):</strong></p>', unsafe_allow_html=True)
+    st.write('1. Adhisurya Pratama (2360057)')
+    st.write('2. Cahya Bintang Gagana Yuliano (2360089)')
+    st.write('3. Intan Cahyanyngtias (2360147)')
+    st.write('4. Shintha Aulia (2360261)')
+    st.markdown('<p><strong style="color: #E95793;">Nama Projek:</strong> Aplikasi Penentu pH Larutan</p>', unsafe_allow_html=True)
+    st.markdown('<p><strong style="color: #E95793;">Nama Sistem:</strong> pHlytics</p>', unsafe_allow_html=True)
+    st.markdown('<p><strong style="color: #E95793;">Penjelasan Sistem:</strong> Aplikasi ini dapat digunakan untuk menghitung pH dari suatu larutan disertai dengan sifat larutan tersebut dengan menginput konsentrasi (molaritas)</p>', unsafe_allow_html=True)
+    st.markdown('<p><strong style="color: #E95793;">Input:</strong> Nama senyawa (masukkan sendiri), Konsentrasi larutan dalam molaritas, valensi senyawa, input Ka atau Kb</p>', unsafe_allow_html=True)
+    st.markdown('<p><strong style="color: #E95793;">Output:</strong> pH, sifat larutan nya, indikator yang cocok.</p>', unsafe_allow_html=True)
+
+def penjelasan():
+    st.markdown('<h1 style="color: #DA0C81;">Penjelasan</h1>', unsafe_allow_html=True)
+    tabs = st.tabs(['Sindur Metil (SM)', 'Indikator Metil Merah', 'Indikator Bromtimol Blue', 'Indikator Fenolftalein'])
+    
+    with tabs[0]:
+        st.markdown('<h2><strong style="color: #E95793;">Sindur Metil</strong></h2>', unsafe_allow_html=True)
+
+        st.markdown("""
+        Indikator Sindur Metil adalah senyawa kimia yang digunakan sebagai indikator pH pada larutan asam atau netral dalam rentang pH 3,1-4,4.
+        berikut adalah beberapa fakta tentang sindur metil:
+        
+        - **Nama Kimia:** Sindur metil juga dikenal sebagai 4-dimetilaminoazobenzena atau merah CIB-3.
+        
+        - **Sifat Warna:** Senyawa ini memiliki sifat warna yang unik; berwarna merah dalam suasana asam dan berubah menjadi kuning dalam suasana basa.
+        
+        - **Indikator pH:** Sindur metil digunakan sebagai indikator pH dalam titrasi asam-basa. Perubahan warna yang ditunjukkan oleh sindur metil digunakan untuk menentukan titik akhir titrasi.
+        
+        - **Spektrum Absorpsi:** Sindur metil menunjukkan puncak absorpsi dalam spektrum UV-Vis pada panjang gelombang sekitar 520 nm.
+        
+        - **Aplikasi:** Selain sebagai indikator pH, sindur metil juga digunakan dalam pewarnaan histologi untuk mewarnai jaringan biologis dalam mikroskopi.
+        
+        - **Keamanan:** Meskipun digunakan dalam banyak aplikasi laboratorium, sindur metil harus ditangani dengan hati-hati karena sifatnya yang beracun dan kemungkinan pencemaran lingkungan.
+        
+        - **Penggunaan Historis:** Sindur metil telah digunakan dalam berbagai aplikasi sejak awal abad ke-20 dan tetap menjadi salah satu indikator pH yang penting dan umum digunakan hingga saat ini.
+        """)
+    
+    with tabs[1]:
+        st.markdown('<h2><strong style="color: #E95793;">Indikator Metil Merah</strong></h2>', unsafe_allow_html=True)
+        
+        st.markdown("""        
+        Indikator metil merah adalah senyawa kimia yang digunakan sebagai indikator pH pada larutan asam atau netral dalam rentang pH 4,2-6,3.
+        berikut adalah beberapa fakta tentang indikator metil merah:
+        
+         - **Nama Kimia:** Metil merah juga dikenal sebagai p-[(dimetilamino)fenil]-diazenilbenzena atau C.I. 13020.
+        
+         - **Perubahan Warna:** Metil merah memiliki sifat warna yang unik: berwarna merah dalam suasana asam dan berubah menjadi kuning saat larutan menjadi basa. Perubahan warna ini terjadi di sekitar pH 4,4 hingga 6,2.
+        
+         - **Penggunaan:** Metil merah sering digunakan sebagai indikator pH dalam titrasi asam-basa, terutama dalam titrasi asam lemah dengan basa kuat atau dalam titrasi alkali dengan asam lemah.
+        
+         - **Titik Perubahan Warna:** Titik perubahan warna metil merah sedikit lebih rendah daripada fenolftalein, sehingga metil merah lebih cocok untuk titrasi asam yang lebih lemah.
+        
+         - **Kepekaan Terhadap Cahaya:** Metil merah rentan terhadap kerusakan oleh cahaya matahari dan sinar UV, sehingga harus disimpan dalam botol berwarna gelap untuk menjaga kestabilannya.
+        """)
+    
+    with tabs[2]:
+        st.markdown('<h2><strong style="color: #E95793;">Indikator Bromtimol Blue</strong></h2>', unsafe_allow_html=True)
+
+        st.markdown("""        
+        Indikator bromtimol blue adalah senyawa kimia yang digunakan sebagai indikator pH dalam titrasi asam-basa dalam rentang pH 6,0-7,6.
+        berikut adalah beberapa fakta tentang indikator bromtimol blue:
+        
+         - **Nama Kimia:** Bromtimol blue juga dikenal sebagai 3',3'',5',5''-tetrabromofenolsulfonftalein atau C.I. 42090.
+        
+         - **Perubahan Warna:** Bromtimol blue memiliki sifat warna yang unik: berwarna biru dalam suasana basa, hijau dalam suasana netral, dan berubah menjadi kuning ketika larutan menjadi asam. Perubahan warna ini terjadi di sekitar pH 6,0 hingga 7,6.
+        
+         - **Kepekaan Terhadap Cahaya:** Seperti banyak indikator lainnya, bromtimol blue rentan terhadap kerusakan oleh cahaya matahari dan sinar UV, sehingga harus disimpan dalam botol berwarna gelap untuk menjaga kestabilannya.
+        
+         - **Penggunaan:** Bromtimol blue digunakan sebagai indikator pH dalam titrasi asam-basa, terutama dalam titrasi asam kuat dengan basa kuat atau dalam titrasi asam lemah dengan basa kuat.
+        
+         - **Penggunaan Lain:** Selain sebagai indikator pH, bromtimol blue juga digunakan dalam biologi sebagai penanda untuk mengidentifikasi zona pH dalam elektroforesis gel agarosa.
+        """)
+    
+    with tabs[3]:
+        st.markdown('<h2><strong style="color: #E95793;">Indikator Fenolftalein</strong></h2>', unsafe_allow_html=True)
+
+        st.markdown("""        
+        Indikator fenolftalein adalah senyawa kimia yang digunakan sebagai indikator pH dalam titrasi asam-basa dalam rentang pH 8,2-10.
+        berikut adalah beberapa fakta tentang indikator fenolftalein:
+        
+         - **Nama Kimia:** Fenolftalein memiliki nama kimia 3,3-bis(4-hidroksifenil)-2H-isobenzofuran-1-on.
+        
+         - **Perubahan Warna:** Fenolftalein tidak berwarna dalam suasana asam, tetapi berubah menjadi merah muda hingga merah dalam suasana basa.
+        
+         - **Titik Perubahan Warna:** Perubahan warna fenolftalein terjadi di sekitar pH 8,2 hingga 10,0. Di bawah pH 8,2, fenolftalein tetap tidak berwarna, sedangkan di atas pH 10,0, fenolftalein menjadi merah.
+        
+         - **Penggunaan Umum:** Fenolftalein adalah indikator pH yang sangat umum digunakan dalam laboratorium kimia, terutama dalam titrasi asam-basa. Perubahan warna fenolftalein menunjukkan titik akhir titrasi, di mana asam dan basa telah bereaksi sepenuhnya.
+        
+         - **Kerusakan:** Fenolftalein rentan terhadap kerusakan oleh sinar UV dan dapat memudar dari paparan cahaya matahari yang berlebihan.
+        """)
+
+def main():
+    st.sidebar.image("asset/icon.png", use_column_width=True)
+
+    menu_option = st.sidebar.selectbox(
+        'Pilih Menu:',
+        ('Dashboard', 'Penjelasan', 'Kalkulator', 'Tentang Sistem')
+    )
+    if menu_option == 'Dashboard':
+        dashboard()
+    elif menu_option == 'Penjelasan':
+        penjelasan()
+    elif menu_option == 'Kalkulator':
+        kalkulator()
+    elif menu_option == 'Tentang Sistem':
+        tentang_sistem()
+
+if __name__ == '__main__':
+    main()
